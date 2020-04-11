@@ -1,15 +1,12 @@
 import React from 'react';
 import 'react-native-gesture-handler';
-import { NavigationContainer, StackActions } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { StyleSheet, Text, View, Button, Image } from 'react-native';
+import { Text, View, Button } from 'react-native';
 import { TextInput, State } from 'react-native-gesture-handler';
-import { Ionicons } from '@expo/vector-icons'
 import { SplashScreen } from 'expo';
-import { BottomNavigation } from 'react-native-paper'; 
-import { render } from 'react-dom';
+import Nav from './app/Nav'
 import BottmNav from './BottmNav'
 
 const Stack = createStackNavigator(); 
@@ -133,14 +130,7 @@ function Root() {
 
 
 export default function App() {
-  return <BottmNav />
+  return <Nav />
+  //return <BottmNav />
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
