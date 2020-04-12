@@ -6,49 +6,96 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { ScrollView } from 'react-native-gesture-handler';
 
 const CategoryCard = (props) => {
+    const {colors} = props.theme 
+    const item = props.item
+    const {navigate} = props.navigation
+
     return (
-        <Card style={styles.card} onPress={() => console.log("click!")}>
-            <Icon name="food" size={50} style={{alignSelf: 'center'}} />
-            <Text style={{textAlign: 'center'}} >ACTIVE DUTY &amp; VETERANS</Text>
+        <Card style={styles.card} 
+            onPress={() => {
+                console.log(item.id)
+                navigate('Campaign', {
+                    category: item
+                })
+            }} 
+        >
+            <Icon name={item.icon} size={50} style={{alignSelf: 'center', marginBottom: 10}} color={item.color}/>
+            <Text style={{textAlign: 'center', marginTop: 10}} >{item.name}</Text>
         </Card>
     )
 }
 const data = [
     {
         id: '1',
+        name: 'Hunger',
+        icon: 'food',
+        color: 'orange',
     },
     {
         id: '2',
+        name: 'Health & Medical Care',
+        icon: 'stethoscope',
+        color: 'red',
     },
     {
         id: '3',
+        name: 'Disaster Relief',
+        icon: 'medical-bag',
+        color: 'black',
     },
     {
         id: '4',
+        name: 'Environment',
+        icon: 'flower',
+        color: 'green',
     },
     {
         id: '5',
+        name: 'Arts & Culture',
+        icon: 'music',
+        color: 'purple',
     },
     {
         id: '6',
+        name: 'Animals & Humane',
+        icon: 'paw',
+        color: 'pink',
     },
     {
         id: '7',
+        name: 'Human Services',
+        icon: 'toolbox',
+        color: 'firebrick',
     },
     {
         id: '8',
+        name: 'Education',
+        icon: 'school',
+        color: 'brown',
     },
     {
         id: '9',
+        name: 'Active Duty & Veterans',
+        icon: 'pistol',
+        color: 'olive',
     },
     {
         id: '10',
+        name: 'Community & Family',
+        icon: 'account-group',
+        color: 'teal',
     },
     {
         id: '11',
+        name: 'Faith & Missions',
+        icon: 'church',
+        color: 'gold',
     },
     {
         id: '12',
+        name: 'Global',
+        icon: 'earth',
+        color: 'darkolivegreen',
     },
 ]
 
@@ -73,14 +120,14 @@ class HomeScreen extends React.Component {
                     </Card.Content>
                 </Card>
 
-                <Title style={{marginLeft: 10, marginTop: 10, marginBottom: 10}}>SELECT CATEGORY</Title>
+                <Title style={{marginLeft: 10, marginTop: 10, marginBottom: 10, textAlign: 'center'}}>
+                    Donation Categories
+                </Title>
+
                 <View style={styles.categoryList}>
-                    <FlatList
-                        data={data}
-                        renderItem={() => <CategoryCard {...this.props}/>}
-                        keyExtractor={item => item.id}
-                        numColumns={2}
-                    />
+                    {data.map(item => (
+                        <CategoryCard item={item} {...this.props}/>
+                    ))}
                 </View>
                 </ScrollView>
             </View>
@@ -99,21 +146,21 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     categoryList:{
-        // flexDirection: 'row',
-        // flexWrap: 'wrap',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: 10,
     },
     card: {
-        width: 170,
-        height: 100,
-        padding: 10,
-        paddingTop: 10,
-        // marginLeft: 10,
-        // marginRight: 10,
-        // marginTop: 10,
-        // marginBottom: 10,
+        width: 150,
+        height: 170,
+        padding: 20,
+        paddingTop: 30,
+        marginLeft: 10,
+        marginRight: 10,
+        marginTop: 10,
+        marginBottom: 10,
         alignItems: 'center',
         justifyContent: 'center',
         textAlign: 'center',

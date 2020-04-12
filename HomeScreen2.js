@@ -1,105 +1,20 @@
 import * as React from 'react';
 import { StyleSheet, View, SafeAreaView, FlatList } from 'react-native'
-import { Provider as PaperProvider ,BottomNavigation, Text, Button, Divider, Avatar, Card, Paragraph } from 'react-native-paper';
+import { Title, Text, Button, Divider, Avatar, Card, Paragraph } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { withTheme } from 'react-native-paper'
 
-const CampaignCard = (props) => {
-    const { colors } = props.theme
-
-    const handleDonate = () => {
-        console.log("Donating")
-		
-            fetch("http://192.168.43.184:8080" + "/categories", {
-                method: "GET",
-                headers: {"Content-Type": "application/json"},
-            }).then((response) => {
-                return response.json()
-            }).then((data) => {
-                console.log(data)
-            }).catch((error) => {
-                console.log(error)
-            })
-    }
-
-    // return (
-    //     <View style={sytles.card}>
-    //       <Card.Title style={sytles.cardTitle}
-    //         left={() =>
-    //             //<Card.Cover style={sytles.cardImg} source={{uri: 'https://picsum.photos/700'}} />
-    //            <Avatar.Image style={sytles.cardImg} source={{uri: 'https://picsum.photos/700'}} />
-    //         }
-    //         leftStyle={sytles.cardImg}
-    //         title="UDSM Rotaract Club" 
-    //         subtitle={
-    //           <>
-    //             <Icon name="map-marker" />
-    //             <Text>Tanzania</Text>
-    //           </>
-    //         }
-    //       />
-    //       <Card.Content>
-    //         <Paragraph>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi bibendum tortor in eros dictum pellentesque. Class aptent taciti sociosqu ad.</Paragraph>
-    //       </Card.Content>
-    //       <Card.Actions style={{justifyContent: 'flex-end'}}>            
-    //         <Button mode="contained" onPress={handleDonate}>
-    //             Donate
-    //         </Button>
-    //         <Button>
-    //             <Text style={{color: colors.primary}}>More Info</Text>
-    //             <Icon name="chevron-right" />
-    //         </Button>
-    //       </Card.Actions>
-    //       <Divider />
-    //     </View>
-    // )
-
-    return (
-        <>
-        <>
-        <View style={sytles.card}>
-            <View style={{ width: 300, justifyContent: 'flex-start' }} >
-          <Card.Title style={sytles.cardTitle}
-            title="UDSM Rotaract Club" 
-            titleStyle={sytles.cardTitle}
-            subtitle={
-              <>
-                <Icon name="map-marker" />
-                <Text>Tanzania</Text>
-              </>
-            }
-          />
-          <Card.Content style={sytles.cardContent}>
-            <Paragraph style={sytles.cardText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi bibendum tortor in eros dictum pellentesque. Class aptent taciti sociosqu ad.</Paragraph>
-          </Card.Content>
-          </View>
-          <View style={{flex: 1, width: 100}}>
-            <Avatar.Image size={100} style={sytles.cardImg} source={{uri: 'https://picsum.photos/700'}} />
-          </View>
-        </View>
-        <Card.Actions style={sytles.cardBtns}>  
-          <View style={{flex: 1}} >      
-            <Button style={{justifyContent: 'flex-start', alignSelf: 'flex-start'}}>
-                <Text style={{color: colors.primary}}>More Info</Text>
-                <Icon name="chevron-right" />
-            </Button>
-            </View>
-            <Button mode="outlined" onPress={handleDonate} style={{justifyContent: 'flex-end', borderColor: colors.primary}}>
-                Donate
-            </Button>
-          </Card.Actions>
-            </>
-            <Divider />
-            </>
-
-    )
-}
+import CampaignCard from './app/components/CampaignCard'
 
 const data = [
     {
         id: '1',
+        campaignName: '',
+        description: '',
+        country: '',
+        logo: '',
     },
     {
         id: '2',
@@ -118,41 +33,69 @@ const data = [
     },
 ]
 
-const HomeScreen2 = (props) => {
-    return (
-      <SafeAreaView >
-        <FlatList
-            data={data}
-            renderItem={() => <CampaignCard {...props}/>}
-            keyExtractor={item => item.id}
-        />
-      </SafeAreaView>
-    );
+class HomeScreen2 extends React.Component{
+    
+    state = {
+        loading: true,
+        data: [],
+        category: this.props.route.params.category,
+    }
+    
+    componentDidMount(){
+        console.log(this.props.route.params.category)
+        //Fetch campaigns of the selected category from the database
+
+        var x = [
+            {
+                id: '1',
+                campaignName: '',
+                description: '',
+                country: '',
+                logo: '',
+            },
+            {
+                id: '2',
+            },
+            {
+                id: '3',
+            },
+            {
+                id: '4',
+            },
+            {
+                id: '5',
+            },
+            {
+                id: '6',
+            },
+        ]
+
+        this.setState({loading: false, data: x})
+    }
+
+    render(){
+        return (
+            <SafeAreaView >
+              <FlatList
+                  data={this.state.data}
+                  renderItem={(item) => <CampaignCard category={this.state.category} item={item} {...this.props}/>}
+                  keyExtractor={item => item.id}
+                  ListHeaderComponent={<Title>Campaigns</Title>}
+                  ListHeaderComponentStyle={sytles.title}
+              />
+            </SafeAreaView>
+        );
+    }
+    
 }
 
-// const sytles = StyleSheet.create({
-//     card: {
-//         marginTop: 5,
-//         marginBottom: 5,
-//         marginLeft: 5,
-//         marginRight: 5,
-//         alignSelf: 'center',
-//        // width: 360,
-//         flex: 1,
-//         paddingTop: 5,
-//     },
-//     cardImg: {
-//         marginRight: 30,
-        
-//     },
-//     cardTitle: {
-        
-        
-//     }
-// });
-
-
 const sytles = StyleSheet.create({
+    title: {
+        textAlign: 'center',
+        alignSelf: 'center',
+        marginTop: 10,
+        marginBottom: 10,
+    },
     card: {
         marginTop: 5,
         marginBottom: 5,
