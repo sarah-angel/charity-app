@@ -126,7 +126,7 @@ class HomeScreen extends React.Component {
 
                 <View style={styles.categoryList}>
                     {data.map(item => (
-                        <CategoryCard item={item} {...this.props}/>
+                        <CategoryCard key={item.id} item={item} {...this.props}/>
                     ))}
                 </View>
                 </ScrollView>

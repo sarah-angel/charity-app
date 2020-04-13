@@ -54,13 +54,26 @@ const CampaignCard = (props) => {
         <Card.Actions style={styles.cardBtns}>  
           <View style={{flex: 1}} >      
             <Button style={{justifyContent: 'flex-start', alignSelf: 'flex-start'}}
-                onPress={() => console.log(campaign.id)}
+                onPress={() => 
+                    navigate('CampaignInfo', {
+                        campaign: campaign,
+                        category: category,
+                    }
+                )}
             >
                 <Text style={{color: colors.primary}}>More Info</Text>
                 <Icon name="chevron-right" />
             </Button>
             </View>
-            <Button mode="outlined" onPress={handleDonate} style={{justifyContent: 'flex-end', borderColor: colors.primary}}>
+            <Button mode="outlined" 
+                onPress={() => 
+                    navigate('Donate', {
+                        campaign: campaign,
+                        category: category,
+                    })      
+                } 
+                style={{justifyContent: 'flex-end', borderColor: colors.primary}}
+            >
                 Donate
             </Button>
           </Card.Actions>
