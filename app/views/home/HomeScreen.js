@@ -109,7 +109,7 @@ class HomeScreen extends React.Component {
             <View style={styles.root}>
                 <ScrollView style={styles.scrollView} >
                 <Card style={styles.expressCard}>
-                    <Card.Title title="Express Donation"/>
+                    <Card.Title titleStyle={{fontSize: 18}} title="Express Donation"/>
                     <Card.Content style={{flexDirection: 'row'}}>
                         <TextInput label='Amount'
                             value={this.state.amount}

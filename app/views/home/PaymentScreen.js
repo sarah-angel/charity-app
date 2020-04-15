@@ -6,12 +6,14 @@ import { withTheme } from 'react-native-paper'
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import ViewOverflow from 'react-native-view-overflow'
 
+import { isAuthenticated, signIn } from '../../auth/authService'
 import { getCreditCardToken, saveCard, pay } from '../../services/paymentService'
 
 class PaymentScreen extends React.Component {
     colors = this.props.theme.colors
 
     state = {
+        signedIn: false,
         method: 'card', //Default payment method
         stripeCustomerId: null,
         cardName: '',
@@ -29,9 +31,16 @@ class PaymentScreen extends React.Component {
         error: null,
     }
 
-    //Check if user has a stripeCustomerId in the database
+    //Check if user is signed in, if not, prompt user to sign in
+    //Fetch stripeCustomerId in the database if available
     componentDidMount = () => {
-
+        isAuthenticated().then(response => {
+            if ( response != null ){
+                this.setState({signedIn: true})
+            } else { //user not signed in
+                this.props.navigation.navigate('SignIn')
+            }
+        })
     }
 
     handlePay = () => {

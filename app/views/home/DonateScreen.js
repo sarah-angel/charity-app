@@ -6,6 +6,7 @@ import { Dropdown } from 'react-native-material-dropdown'
 import { withTheme } from 'react-native-paper'
 
 import GLOBAL from '../../global'
+import ErrorView from '../../components/Error'
 
 var DonateCard = (props) => {
     const donation = props.donation
@@ -74,6 +75,7 @@ class DonateScreen extends React.Component{
         donations: [],
         total: '0.00',
         currency: 'USD',
+        error: null,
     }
 
     //Fetch donation state from global
@@ -155,6 +157,8 @@ class DonateScreen extends React.Component{
         return (
                 <ScrollView style={styles.root} contentContainerStyle={{flexGrow: 1, flexDirection: 'column'}}>
                 <Title style={styles.title}>Donation Basket</Title>
+
+                <ErrorView error={this.state.error} />
 
                 {/* <View style={{}}>
                     <Dropdown

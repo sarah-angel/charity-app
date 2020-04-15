@@ -10,6 +10,8 @@ import CampaignScreen from '../views/home/CampaignScreen'
 import CampaignInfoScreen from '../views/home/CampaignInfoScreen'
 import DonateScreen from '../views/home/DonateScreen'
 import PaymentScreen from '../views/home/PaymentScreen';
+import SignInScreen from '../views/home/SignInScreen'
+import RegisterScreen from '../views/profile/RegisterScreen'
 
 const HomeStack = createStackNavigator();
 
@@ -30,6 +32,8 @@ export default HomeStackNav = () => {
           <HomeStack.Screen name="CampaignInfo" component={CampaignInfoScreen} />
           <HomeStack.Screen name="Donate" component={DonateScreen} />
           <HomeStack.Screen name="Payment" component={PaymentScreen} />
+          <HomeStack.Screen name="SignIn" component={SignInScreen} />
+          <HomeStack.Screen name="Register" component={RegisterScreen} />
         </HomeStack.Navigator>
       </NavigationContainer>
     )

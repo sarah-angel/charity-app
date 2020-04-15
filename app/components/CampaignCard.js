@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     },
     cardTitle: {
         marginRight: 10,
-        
+        fontSize: 18,
     },
     cardContent: {
     },
