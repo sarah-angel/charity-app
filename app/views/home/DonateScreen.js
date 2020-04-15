@@ -36,7 +36,7 @@ var DonateCard = (props) => {
                     <Card.Content style={styles.cardContent}>
                         <TextInput
                             label="Amount"
-                            value={donation.amount}
+                            value={ donation.amount? donation.amount.toString() : ''}
                             mode='outlined'
                             keyboardType='decimal-pad'
                             style={{width: 200, height: 50, backgroundColor: 'white'}}
@@ -99,6 +99,8 @@ class DonateScreen extends React.Component{
             })
         }
         this.setState({donations: GLOBAL.donations})
+
+        this.getTotal()
     }
 
     //set amount for campaign in the basket
@@ -117,7 +119,7 @@ class DonateScreen extends React.Component{
         GLOBAL.donations.forEach(donation => {
             total += parseFloat(donation.amount)
         })
-        this.setState({total})
+        this.setState({total: total.toString()})
     }
 
     //navigate to category screen
@@ -136,10 +138,17 @@ class DonateScreen extends React.Component{
         this.getTotal()
     }
 
+    //Loop through each donation and check if amount is zero
     //Navigate to payment screen
     //send total amount and currency
     goToPay = () => {
-
+        if ( this.state.total > 0 )
+            this.props.navigation.navigate('Payment', {
+                total: this.state.total,
+                currency: this.state.currency,
+            })
+        else 
+            this.setState({error: "Total donation must be greater than 0"})
     }
 
     render(){
@@ -167,10 +176,11 @@ class DonateScreen extends React.Component{
                 
                 <View style={{width: '100%', position: 'absolute', bottom: 0}}>
                     <View style={{flexDirection: "row", marginTop: 10, marginBottom: 10, }}>
-                        <Title style={{flex:1, justifyContent: 'flex-start'}}>Total Donation</Title>
-                        <Title style={{flex: 1, textAlign: 'right'}}> 
-                            {this.state.currency} {''}
+                        <Title style={{flex:1, justifyContent: 'flex-start', fontSize: 18}}>Total Donation</Title>
+                        <Title style={{flex: 1, textAlign: 'right', fontSize: 18}}> 
                             {this.state.total ? this.state.total : '0.00'}
+                            {' '}
+                            {this.state.currency}
                         </Title>
                     </View>
                                         
@@ -179,7 +189,10 @@ class DonateScreen extends React.Component{
                         onPress={this.addDonation}
                     > + Add another Donation</Button>
 
-                    <Button mode="contained" style={{marginBottom: 10}}>Continue to Donate</Button>
+                    <Button mode="contained" 
+                        style={{marginBottom: 10}}
+                        onPress={this.goToPay}
+                    >Continue to Donate</Button>
                 </View>
                 </ScrollView>
         );
@@ -230,6 +243,7 @@ const styles = StyleSheet.create({
         marginRight: 10,
         marginBottom: -10,
         marginTop: -10,
+        fontSize: 18,
         
     },
     

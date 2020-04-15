@@ -114,9 +114,10 @@ class HomeScreen extends React.Component {
                         <TextInput label='Amount'
                             value={this.state.amount}
                             onChangeText={amount => this.setState({amount})}
-                            style={{width: 210, height: 50}}
+                            mode="outlined"
+                            style={{width: 210, height: 50, backgroundColor: 'white'}}
                         />
-                        <Button style={{flex: 1}} mode="contained">Donate</Button>
+                        <Button style={{flex: 1, height: 50, marginTop: 5}} mode="contained">Donate</Button>
                     </Card.Content>
                 </Card>
 
