@@ -12,6 +12,7 @@ const getCreditCardToken = (cardData) => {
         'card[exp_month]': cardData.cardExpiry.split('/')[0],
         'card[exp_year]': cardData.cardExpiry.split('/')[1],
         'card[cvc]': cardData.cardCvc,
+        'card[name]': cardData.cardName
     }
 
     return fetch(stripeURL, {
@@ -48,7 +49,7 @@ const saveCardAndPay = (cardData) => {
     }).then( response => 
         response.json()
     ).then(response => {
-        cardData.stripeCustomerId = response.id
+        cardData.stripeCustomerId = cardData.stripeCustomerId ? cardData.stripeCustomerId : response.id
         //save in db
         return pay(cardData)
     }).catch(error => 
@@ -68,4 +69,16 @@ const pay = (cardData) => {
     )
 }
 
-export { getCreditCardToken, saveCardAndPay, pay }
+const getSavedCards = (data) => {
+    return fetch( paymentURL + '/cards', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    }).then( response => {
+        return response.json()
+    }).catch(error => 
+        console.log(error)
+    )
+}
+
+export { getCreditCardToken, saveCardAndPay, pay, getSavedCards }

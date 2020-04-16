@@ -102,6 +102,18 @@ const data = [
 class HomeScreen extends React.Component {
     state = {
         amount: '',
+        error: null,
+    }
+
+    //Go straight to payment screen
+    donate = () => {
+        if ( this.state.amount > 0 ){
+            this.props.navigation.navigate('Payment', {
+                total: this.state.amount,
+                currency: 'USD'
+            })
+        } else
+            this.setState({error: 'Please enter amount to donate.'})
     }
 
     render(){
@@ -115,9 +127,13 @@ class HomeScreen extends React.Component {
                             value={this.state.amount}
                             onChangeText={amount => this.setState({amount})}
                             mode="outlined"
-                            style={{width: 210, height: 50, backgroundColor: 'white'}}
+                            keyboardType="decimal-pad"
+                            style={{width: 210, backgroundColor: 'white'}}
                         />
-                        <Button style={{flex: 1, height: 50, marginTop: 5}} mode="contained">Donate</Button>
+                        <Button style={{flex: 1,  marginTop: 5, justifyContent: 'center'}} 
+                            mode="contained"
+                            onPress={this.donate}
+                        >Donate</Button>
                     </Card.Content>
                 </Card>
 

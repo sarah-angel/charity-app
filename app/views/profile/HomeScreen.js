@@ -5,7 +5,6 @@ import { withTheme } from 'react-native-paper'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { ScrollView } from 'react-native-gesture-handler';
 
-import Auth from './Auth';
 import { isAuthenticated } from '../../auth/authService'
 
 class HomeScreen extends React.Component {

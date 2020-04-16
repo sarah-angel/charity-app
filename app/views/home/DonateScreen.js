@@ -40,7 +40,7 @@ var DonateCard = (props) => {
                             value={ donation.amount? donation.amount.toString() : ''}
                             mode='outlined'
                             keyboardType='decimal-pad'
-                            style={{width: 200, height: 50, backgroundColor: 'white'}}
+                            style={{width: 200, backgroundColor: 'white'}}
                             onChangeText={amount => props.setAmount(donation.campaign.id, amount)}
                         />
                     </Card.Content>
@@ -126,7 +126,7 @@ class DonateScreen extends React.Component{
 
     //navigate to category screen
     addDonation = () => {
-        this.props.navigation.push('Home')
+        this.props.navigation.navigate('Home')
     }
 
     //Remove donation with the given campaign.id from global
@@ -150,7 +150,7 @@ class DonateScreen extends React.Component{
                 currency: this.state.currency,
             })
         else 
-            this.setState({error: "Total donation must be greater than 0"})
+            this.setState({error: "Please enter amount to donate."})
     }
 
     render(){

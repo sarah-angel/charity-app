@@ -5,36 +5,41 @@ import { withTheme } from 'react-native-paper'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { ScrollView } from 'react-native-gesture-handler';
 
-import { signIn } from '../../auth/authService'
+import { signIn } from './authService'
 
-function SignInScreen(props) {
-    const [username, setUsername] = React.useState('')
-    const [password, setPassword] = React.useState('')
+class SignInScreen extends React.Component {
 
-    //const { signIn } = React.useContext(props.AuthContext)
+    state = {
+        username: '',
+        password: '',
+        error: null,
+    }
 
-    function handleSignIn() {
+    handleSignIn = () => {
         console.log("Signing in...")
-        var data = {
-            username,
-            password,
+        
+        var user = {
+            username: this.state.username,
+            password: this.state.password,
         }
 
         //Authenticate user in the server
         //Navigate to previous screen
-        signIn(data).then( response => {
+        signIn(user).then( response => {
+            console.log(response)
             if (response.error)
-                console.log(response.error)
+                this.setState({ error: response.error})
             else {
-                props.navigation.goBack()
+                this.props.navigation.goBack()
             }
         })
     }
 
+    render() {
     return (
         <View style={styles.root}>
             <Button
-                onPress={() => props.navigation.goBack()}
+                onPress={() => this.props.navigation.goBack()}
                 uppercase={false}
                 style={{alignSelf: 'flex-end',}}
             >
@@ -47,23 +52,26 @@ function SignInScreen(props) {
                 Sign In 
             </Title>
 
+            <ErrorView error={this.state.error} />
+
             <TextInput
                 label="Username"
                 mode="outlined"
-                onChangeText={setUsername}
+                onChangeText={(username) => this.setState({username})}
                 style={{marginBottom: 10, marginTop: 10}}
             />
 
             <TextInput
                 label="Password"
                 mode="outlined"
-                onChangeText={setPassword}
+                onChangeText={(password) => this.setState({password})}
                 style={{marginBottom: 10, marginTop: 10}}
             />
 
             <Button mode="contained"
                 style={styles.signInBtn}
-                onPress={() => handleSignIn()}
+                disabled={this.state.submitted}
+                onPress={this.handleSignIn}
             >
                 Sign In
             </Button>
@@ -74,6 +82,7 @@ function SignInScreen(props) {
                 </Text>
                 <Button mode="flat"
                     style={styles.registerBtn}
+                    onPress={() => this.props.navigation.navigate('Register')}
                 >
                     Register
                 </Button>
@@ -86,6 +95,7 @@ function SignInScreen(props) {
         </View>
         
     )
+    }
 }
 
 const styles = StyleSheet.create({

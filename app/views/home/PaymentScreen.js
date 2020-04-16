@@ -1,13 +1,16 @@
 import * as React from 'react';
 import { StyleSheet, View, SafeAreaView, Image, ScrollView } from 'react-native'
-import { Title, Text, TextInput, Button, Modal, Portal, Card, Switch, Badge } from 'react-native-paper';
+import { Title, Text, TextInput, Button, Modal, Portal, Card, Switch, Provider } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { withTheme } from 'react-native-paper'
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import ViewOverflow from 'react-native-view-overflow'
+import { CommonActions } from '@react-navigation/native'
 
+import GLOBAL from '../../global'
 import { isAuthenticated, signIn } from '../../auth/authService'
-import { getCreditCardToken, saveCard, pay } from '../../services/paymentService'
+import { getCreditCardToken, saveCardAndPay, pay, getSavedCards } from '../../services/paymentService'
+import MyCard from '../../components/MyCard';
 
 class PaymentScreen extends React.Component {
     colors = this.props.theme.colors
@@ -15,13 +18,16 @@ class PaymentScreen extends React.Component {
     state = {
         signedIn: false,
         method: 'card', //Default payment method
+        userId: null,
         stripeCustomerId: null,
+        savedCards: null, //list of saved cards for the user
+        newCard: true, //if need to manually input card details (use unsaved card)
         cardName: '',
         cardNumber: '',
         cardExpiry: '',
         cardCvc: '',
         cardId: null, //selected card to charge
-        stripeToken: '',
+        stripeToken: null,
         email: '',
         saveCard: false,
         total: this.props.route.params.total,
@@ -34,25 +40,75 @@ class PaymentScreen extends React.Component {
     //Check if user is signed in, if not, prompt user to sign in
     //Fetch stripeCustomerId in the database if available
     componentDidMount = () => {
-        isAuthenticated().then(response => {
-            if ( response != null ){
-                this.setState({signedIn: true})
+        isAuthenticated().then(token => {
+            if ( token != null ){
+                this.setState({signedIn: true, userId: token.userId})
+
+                console.log(token.userId)
+                //fetch stripe
+                //this.setState({stripeCustomerId: 'cus_H0NXqMS2GHklD5'})
+
             } else { //user not signed in
                 this.props.navigation.navigate('SignIn')
             }
         })
+
     }
 
-    handlePay = () => {
-        console.log("donating..")
-        
+    componentDidUpdate = () => {
+        console.log('updated')
+    }
+
+    //Get saved cards for customer from stripe
+    handleCardMethod = () => {
+        this.setState({method: 'card'})
+
+        if ( this.state.stripeCustomerId ){
+            var data = {
+                stripeCustomerId: this.state.stripeCustomerId
+            }
+
+            getSavedCards(data).then( response => {
+                if (response.error)
+                    this.setState({error: response.error})
+                else
+                    this.setState({savedCards: response.data, newCard: false})
+                console.log(response)
+            })
+        }
+
+    }
+
+    //Make payment to stripe
+    //Then send donation details to the server for storing
+    handlePay = () => {        
         //Disable submit button
         this.setState({submitted: true})
+
+        var data = {
+            stripeToken: this.state.stripeToken,
+            amount: this.state.total,
+            currency: this.state.currency,
+            name: this.state.cardName ? this.state.cardName : null,
+            stripeCustomerId: this.state.stripeCustomerId,
+            cardId: this.state.cardId,
+        }
+
+        //If cardId is given then don't fetch token
+        if ( this.state.cardId )
+            pay(data).then(response => {
+                if (response.error)
+                    this.setState({submitted: false, error: response.error})
+                else
+                    if (response.status == 'succeeded')
+                        this.setState({success: true})
+            })
 
         var cardData = {
             cardNumber : this.state.cardNumber,
             cardExpiry : this.state.cardExpiry,
-            cardCvc : this.state.cardCvc
+            cardCvc : this.state.cardCvc,
+            cardName: this.state.cardName,
         }
 
         //Get token from stripe
@@ -66,15 +122,8 @@ class PaymentScreen extends React.Component {
                 }
                 else{
                     this.setState({stripeToken: response})
-
-                    var data = {
-                        stripeToken: response,
-                        amount: this.state.total,
-                        currency: this.state.currency,
-                        name: this.state.cardName ? this.state.cardName : null,
-                        stripeCustomerId: this.state.stripeCustomerId,
-                        cardId: this.state.cardId,
-                    }
+                    console.log(response)
+                    data.stripeToken = response
 
                     //if save card is checked, save card then pay
                     if ( this.state.saveCard ){
@@ -92,7 +141,7 @@ class PaymentScreen extends React.Component {
                             if (response.error)
                                 this.setState({submitted: false, error: response.error})
                             else
-                                if (response.status == 'secceeded')
+                                if (response.status == 'succeeded')
                                     this.setState({success: true})
                         })
                     }
@@ -100,61 +149,102 @@ class PaymentScreen extends React.Component {
             })
     }
 
+    reset = () => { 
+        console.log("Resetting...")
+        GLOBAL.donations = []
+
+        //reset donation stack
+        this.props.navigation.dispatch(CommonActions.reset({
+          index: 0,
+          routes: [
+            { name: 'Home'}
+          ]
+        }))
+    }
+
+    componentWillUnmount = () => {
+        GLOBAL.donations = []
+    }
+
     render() {
         return (
             <SafeAreaView style={styles.root}>
-                <ScrollView contentContainerStyle={{flexGrow: 1, flexDirection: 'column'}}>
+                <ScrollView contentContainerStyle={{flexGrow: 1, flexDirection: 'column'}}>                    
                     <Title style={styles.title}>Payment Method</Title>
 
                     <View style={{flexDirection: 'row', justifyContent: 'center'}}>
                         <View style={{}}>
-                            <Card style={styles.methodCard}
-                                onPress={() => this.setState({method: 'card'})}
+                            <Card style={[styles.methodCard, 
+                                this.state.method == 'card' 
+                                    ? {borderColor: this.colors.primary, borderStyle: 'solid', borderWidth: 5} 
+                                    : {}
+                                ]}
+                                onPress={this.handleCardMethod}
                             >
-                                <Icon name='credit-card' size={50} 
-                                    style={{justifyContent: 'center', marginTop: 10}} 
-                                    //color={this.colors.primary} 
+                                <Image source={require('../../../assets/card.png')} 
+                                    style={{justifyContent: 'center', marginTop: 10, width: 50, height: 50}} 
                                 />
-                            
                             </Card>
-                            <Badge style={styles.methodBadge} size={30} 
-                                visible={this.state.method == 'card'} 
-                            >
-                                <Icon name="check" color="white" size={20} style={{fontSize: 20}} />
-                            </Badge>
                         </View>
                         <View style={{}}>
-                            <Card style={styles.methodCard}
+                            <Card style={[styles.methodCard, 
+                                this.state.method == 'paypal' 
+                                    ? {borderColor: this.colors.primary, borderStyle: 'solid', borderWidth: 5} 
+                                    : {}
+                                ]}
                                 onPress={() => this.setState({method: 'paypal'})}
                             >
                                 <Image source={require('../../../assets/paypal.png')} 
                                     style={{justifyContent: 'center', marginTop: 10, width: 70, height: 50}} 
                                 />
                             </Card>
-                            <Badge style={styles.methodBadge} size={30} 
-                                visible={this.state.method == 'paypal'} 
-                            >
-                                <Icon name="check" color="white" size={20} style={{fontSize: 20}} />
-                            </Badge>
                         </View>
                         <View style={{}}>
-                            <Card style={styles.methodCard}
+                            <Card style={[styles.methodCard, 
+                                this.state.method == 'mpesa' 
+                                    ? {borderColor: this.colors.primary, borderStyle: 'solid', borderWidth: 5} 
+                                    : {}
+                                ]}
                                 onPress={() => this.setState({method: 'mpesa'})}
                             >
                                 <Image source={require('../../../assets/mpesa.png')}
                                     style={{justifyContent: 'center', marginTop: 10, width: 60, height: 50}} 
                                 />
                             </Card>
-                            <Badge style={styles.methodBadge} size={30} 
-                                visible={this.state.method == 'mpesa'} 
-                            >
-                                <Icon name="check" color="white" size={20} style={{fontSize: 20}} />
-                            </Badge>
                         </View>      
                     </View>
 
+                    { this.state.method == 'card' && 
+                        <View style={{flexDirection: 'row', marginTop: 10}}>
+                            <Button style={{flex: 1}}
+                                onPress={() => this.setState({newCard: false})}
+                                disabled={ !this.state.newCard }
+                            >My Cards</Button>
+                            <Text style={{flex: 1, fontSize: 20, textAlign: 'center'}}>|</Text>
+                            <Button style={{flex: 1,}}
+                                onPress={() => this.setState({newCard: true})}
+                                disabled={ this.state.newCard }
+                            >New Card</Button>
+                        </View>
+                    }
+
+                    { !this.state.newCard 
+                        && this.state.method == 'card' 
+                        && ( !this.state.savedCards //no saved cards
+                                ? (<Text style={{textAlignVertical: 'center', textAlign: 'center'}}>
+                                        Your saved cards will appear here.
+                                    </Text> 
+                                ) : this.state.savedCards.map(card => 
+                                    <MyCard key={card.id} savedCard={card}
+                                        selectCard={() => this.setState({cardId: card.id})}
+                                    /> 
+                        ))
+                    }
+
                     <Card style={[styles.detailsCard, 
-                        {display: this.state.method == 'card' ? 'flex' : 'none'}]}
+                        {display: (this.state.method == 'card' && this.state.newCard) 
+                            ? 'flex' : 'none'
+                        }]}
                     >
                         <Title style={{fontSize: 18}}>Card Details</Title>
                         
@@ -243,7 +333,8 @@ class PaymentScreen extends React.Component {
                     <Portal>
                         <Modal visible={this.state.success}
                             contentContainerStyle={styles.successModal}
-                            onDismiss={ this.state.success && this.props.navigation.navigate('Home')}
+                            dismissable={true}
+                            onDismiss={ this.reset } //this.props.navigation.navigate('Home')}
                         >
                             <Card style={styles.successCard}>
                                 <Text style={{fontSize: 20, textAlign: 'center'}}>Thank you for your generous donation.</Text>
@@ -278,7 +369,8 @@ const styles = StyleSheet.create({
         alignItems: 'center', 
         borderRadius: 8,
         marginRight: 10,
-        backgroundColor: 'transparent', 
+        backgroundColor: 'white', 
+        //backgroundColor: 'transparent', 
     },
     methodBadge: {
         backgroundColor: 'green', 
@@ -286,7 +378,6 @@ const styles = StyleSheet.create({
         marginRight: 20,
     },
     detailsCard: {
-        //display: 'none', //only show when card method is selected
         marginTop: 20,
         padding: 10,
         borderRadius: 8,
@@ -324,11 +415,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     successModal: {
-        flex: 1,
-        justifyContent: 'center',
-        //width: 200,
-        //height: 400,
-        
+        justifyContent: 'center',        
     },
     successCard: {
         padding: 20,

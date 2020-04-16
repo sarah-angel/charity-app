@@ -1,5 +1,7 @@
 import { AsyncStorage } from 'react-native'
 
+const serverUrl = 'http://192.168.43.184:8081'
+
 async function isAuthenticated() {
     let userToken
 
@@ -12,7 +14,7 @@ async function isAuthenticated() {
 
     //TODO: Validate restored token
 
-    return userToken
+    return JSON.parse(userToken)
 
 }
 
@@ -26,28 +28,65 @@ const logOut = async () => {
 
 //Authenticate user in the server and 
 //store retrieved token
-const signIn = async (data) => {
-    //TODO: authenticate
-    //response from the server, .json then return
-    var response = 'success'
-    try {
-        await AsyncStorage.setItem('userToken', 'dummy')
-    }catch (error){
+const signIn = async (user) => {
+    var response = null
+
+    await fetch( serverUrl + '/signin', {
+        method: 'POST',
+        headers: {"Content-Type": "application/json"},
+		body: JSON.stringify(user)
+    }).then( response => 
+        response.json()
+    ).then( async data => {
+        console.log(data)
+        response = data
+        response = { //mock
+            token: {
+                userId: '48'
+            }
+        }
+        if ( !data.error ) //store token: in this case token is userId
+            try {
+                await AsyncStorage.setItem('userToken', JSON.stringify(response.token))
+            }catch (error){
+                console.log(error)
+            }
+    }).catch( error =>
         console.log(error)
-    }
+    )
 
     return response
 }
 
 //Register user in the server and store retrieved token
-const register = async (data) => {
-    //TODO: server
-
-    try {
-        await AsyncStorage.setItem('userToken', 'dummy')
-    }catch (error){
+const register = async (user) => {
+    var response = null
+    
+    await fetch( serverUrl + '/signup', {
+        method: 'POST',
+        headers: {"Content-Type": "application/json"},
+		body: JSON.stringify(user)
+    }).then( response => 
+        response.json()
+    ).then( async data => {
+        console.log(data)
+        response = data
+        response = { //mock
+            token: {
+                userId: '48'
+            }
+        }
+        if ( !data.error ) //store token: in this case token is userId
+            try {
+                await AsyncStorage.setItem('userToken', response.token)
+            }catch (error){
+                console.log(error)
+            }
+    }).catch( error =>
         console.log(error)
-    }
+    )
+
+    return response
 }
 
 export { isAuthenticated, logOut, signIn, register }
