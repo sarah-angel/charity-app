@@ -12,23 +12,23 @@ class SignInScreen extends React.Component {
     state = {
         username: '',
         password: '',
+        submitted: false,
         error: null,
     }
 
     handleSignIn = () => {
-        console.log("Signing in...")
-        
+        this.setState({submitted: true})
+
         var user = {
             username: this.state.username,
             password: this.state.password,
         }
-
+        
         //Authenticate user in the server
         //Navigate to previous screen
         signIn(user).then( response => {
-            console.log(response)
             if (response.error)
-                this.setState({ error: response.error})
+                this.setState({ error: response.error, submitted: false})
             else {
                 this.props.navigation.goBack()
             }

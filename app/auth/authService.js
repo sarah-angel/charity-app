@@ -40,14 +40,10 @@ const signIn = async (user) => {
     ).then( async data => {
         console.log(data)
         response = data
-        response = { //mock
-            token: {
-                userId: '48'
-            }
-        }
+
         if ( !data.error ) //store token: in this case token is userId
             try {
-                await AsyncStorage.setItem('userToken', JSON.stringify(response.token))
+                await AsyncStorage.setItem('userToken', JSON.stringify(data.token))
             }catch (error){
                 console.log(error)
             }
@@ -71,11 +67,7 @@ const register = async (user) => {
     ).then( async data => {
         console.log(data)
         response = data
-        response = { //mock
-            token: {
-                userId: '48'
-            }
-        }
+        
         if ( !data.error ) //store token: in this case token is userId
             try {
                 await AsyncStorage.setItem('userToken', response.token)

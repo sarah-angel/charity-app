@@ -1,3 +1,6 @@
+import { saveStripeCustomerId } from './userService'
+import { RecyclerViewBackedScrollView } from 'react-native'
+
 const stripeURL = 'https://api.stripe.com/v1/tokens'
 const STRIPE_PUBLIC_KEY = 'pk_test_sHnZDFCFuu6b6sHMaHzolLA100RN8ksrRC'
 const paymentURL = 'http://192.168.43.184:8080'
@@ -42,6 +45,7 @@ const getCreditCardToken = (cardData) => {
  * @param  cardData 
  */
 const saveCardAndPay = (cardData) => {
+
     return fetch( paymentURL + '/customer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
@@ -50,11 +54,25 @@ const saveCardAndPay = (cardData) => {
         response.json()
     ).then(response => {
         cardData.stripeCustomerId = cardData.stripeCustomerId ? cardData.stripeCustomerId : response.id
+        
         //save in db
-        return pay(cardData)
+        var user = {
+            id: cardData.userId,
+            stripeCustomerId: cardData.stripeCustomerId,
+        }
+
+        return saveStripeCustomerId(user)
+            .then(res => {
+                if (res.error)
+                    return res
+                else
+                    return pay(cardData)
+            })
+
     }).catch(error => 
         console.log(error)
     )
+
 }
 
 const pay = (cardData) => {

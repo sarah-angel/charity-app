@@ -3,12 +3,11 @@ import { StyleSheet, View, SafeAreaView, Image, ScrollView } from 'react-native'
 import { Title, Text, TextInput, Button, Modal, Portal, Card, Switch, Provider } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { withTheme } from 'react-native-paper'
-import { Colors } from 'react-native/Libraries/NewAppScreen';
-import ViewOverflow from 'react-native-view-overflow'
 import { CommonActions } from '@react-navigation/native'
 
 import GLOBAL from '../../global'
-import { isAuthenticated, signIn } from '../../auth/authService'
+import { isAuthenticated } from '../../auth/authService'
+import { getStripeCustomerId } from '../../services/userService'
 import { getCreditCardToken, saveCardAndPay, pay, getSavedCards } from '../../services/paymentService'
 import MyCard from '../../components/MyCard';
 
@@ -44,25 +43,54 @@ class PaymentScreen extends React.Component {
             if ( token != null ){
                 this.setState({signedIn: true, userId: token.userId})
 
-                console.log(token.userId)
-                //fetch stripe
-                //this.setState({stripeCustomerId: 'cus_H0NXqMS2GHklD5'})
+                getStripeCustomerId(token.userId).then( response => {
+                    if ( response.error )
+                        this.setState({error: response.error})
+
+                    this.setState({
+                        stripeCustomerId: response.stripeCustomerId 
+                            ? response.stripeCustomerId 
+                            : null
+                    })
+                    this.handleCardMethod()
+                })
 
             } else { //user not signed in
                 this.props.navigation.navigate('SignIn')
             }
         })
 
-    }
+        this.props.navigation.addListener('focus', () => {
+            if ( !this.state.userId )
+                isAuthenticated().then(token => {
+                    if ( token != null ){
+                        this.setState({signedIn: true, userId: token.userId})
+                    
+                        console.log(token.userId)
+                        if ( !this.state.stripeCustomerId )
+                            getStripeCustomerId(token.userId).then( response => {
+                                if ( response.error )
+                                    this.setState({error: response.error})
 
-    componentDidUpdate = () => {
-        console.log('updated')
+                                console.log(response)
+                                this.setState({
+                                    stripeCustomerId: response.stripeCustomerId 
+                                        ? response.stripeCustomerId 
+                                        : null
+                                })
+                                this.handleCardMethod()
+                            })    
+                    } 
+                })
+        })
+
     }
 
     //Get saved cards for customer from stripe
     handleCardMethod = () => {
         this.setState({method: 'card'})
 
+        console.log(this.state.stripeCustomerId)
         if ( this.state.stripeCustomerId ){
             var data = {
                 stripeCustomerId: this.state.stripeCustomerId
@@ -86,6 +114,7 @@ class PaymentScreen extends React.Component {
         this.setState({submitted: true})
 
         var data = {
+            userId: this.state.userId,
             stripeToken: this.state.stripeToken,
             amount: this.state.total,
             currency: this.state.currency,
@@ -150,7 +179,6 @@ class PaymentScreen extends React.Component {
     }
 
     reset = () => { 
-        console.log("Resetting...")
         GLOBAL.donations = []
 
         //reset donation stack

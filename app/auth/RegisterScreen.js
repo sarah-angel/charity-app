@@ -22,7 +22,6 @@ class RegisterScreen extends React.Component {
     handleChange = (field, value) => {
         this.setState({[field]: value})
     }
-    //const { signIn } = React.useContext(props.AuthContext)
 
     handleRegister = () => {
         console.log("Registering...")
@@ -41,9 +40,9 @@ class RegisterScreen extends React.Component {
         //Navigate to previous screen
         register(user).then( response => {
             if (response.error)
-                this.setState({error: response.error})
+                this.setState({error: response.error, submitted: false})
             else {
-                props.navigation.goBack()
+                this.props.navigation.goBack()
             }
         })
     }
