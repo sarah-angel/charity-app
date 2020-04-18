@@ -126,7 +126,7 @@ class DonateScreen extends React.Component{
 
     //navigate to category screen
     addDonation = () => {
-        this.props.navigation.navigate('Home')
+        this.props.navigation.push('Home')
     }
 
     //Remove donation with the given campaign.id from global
@@ -142,12 +142,13 @@ class DonateScreen extends React.Component{
 
     //Loop through each donation and check if amount is zero
     //Navigate to payment screen
-    //send total amount and currency
+    //send total amount, currency and donations list
     goToPay = () => {
         if ( this.state.total > 0 )
             this.props.navigation.navigate('Payment', {
                 total: this.state.total,
                 currency: this.state.currency,
+                donations: this.state.donations,
             })
         else 
             this.setState({error: "Please enter amount to donate."})

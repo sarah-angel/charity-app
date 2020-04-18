@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native'
-import { Appbar, Avatar, Menu, Button } from 'react-native-paper';
+import { Appbar, Avatar, Menu, Button, Portal, Modal, Card, Text } from 'react-native-paper';
 import { CommonActions } from '@react-navigation/native'
 
 import GLOBAL from '../global'
@@ -8,9 +8,13 @@ import { logOut } from '../auth/authService'
 
 export default Header = ({ scene, previous, navigation }) => {
 
+    const [isMenuOpen, setMenu] = React.useState(false)
+
     //delete token from storage
     //reset navigation stacks and states
     const handleLogout = () => {
+      setMenu(false)
+      
       logOut()
 
       GLOBAL.donations = []
@@ -24,6 +28,12 @@ export default Header = ({ scene, previous, navigation }) => {
       }))
     }
 
+    const addCampaign = () => {
+      setMenu(false)
+
+      navigation.navigate('AddCampaign')
+    }
+
     return (
       <>
       <Appbar.Header>
@@ -34,22 +44,45 @@ export default Header = ({ scene, previous, navigation }) => {
         )}
         <Appbar.Content title="Charity" />
         <Appbar.Action icon="magnify" onPress={() => {}} />
-        <Appbar.Action icon="dots-vertical" onPress={() => handleLogout() } />
+        <Appbar.Action icon="dots-vertical" onPress={ () => setMenu(true) } />
       </Appbar.Header>
-      {/* <View style={{alignSelf: 'flex-end'}}>
-      <Menu
-        visible={true}
-        anchor = {
-          <Button>Menu</Button>
-        }
-        contentStyle={{marginTop: -40,}}
       
-      >
-        <Menu.Item title="New Campaign" />
-        <Menu.Item title="Settings" />
-        <Menu.Item title="Logout" />
-    </Menu>
-    </View> */}
+      <Portal>
+          <Modal visible={isMenuOpen}
+              contentContainerStyle={{alignSelf: 'flex-end', marginTop: 35, top: 0, position:'absolute'}}
+              dismissable={true}
+              onDismiss={() => setMenu(false)}  //this.props.navigation.navigate('Home')}
+          >
+              <Card style={{}}>
+                <Button onPress={() => addCampaign()} 
+                  uppercase={false}
+                  contentStyle={{alignSelf: 'flex-start'}}
+                  color="black"
+                  labelStyle={{fontSize: 15,}}
+                > 
+                  Add Campaign
+                </Button>
+                <Button onPress={() => console.log("Add New Campaign")} 
+                  uppercase={false}
+                  contentStyle={{alignSelf: 'flex-start'}}
+                  color="black"
+                  labelStyle={{fontSize: 15,}}
+                > 
+                  Settings
+                </Button>
+                <Button onPress={() => handleLogout()}
+                  uppercase={false}
+                  contentStyle={{alignSelf: 'flex-start'}}
+                  color="black"
+                  labelStyle={{fontSize: 15,}}
+                >
+                  Logout
+                </Button>
+              </Card>
+          </Modal>
+      </Portal>
     </>
     )
   }
+
+  

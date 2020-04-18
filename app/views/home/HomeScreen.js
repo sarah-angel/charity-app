@@ -1,19 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, View, SafeAreaView, FlatList, VirtualizedList } from 'react-native'
 import { Text, Button, Title, Card, TextInput } from 'react-native-paper';
 import { withTheme } from 'react-native-paper'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { ScrollView } from 'react-native-gesture-handler';
 
+import { categories } from '../../store'
+
 const CategoryCard = (props) => {
     const {colors} = props.theme 
-    const item = props.item
     const {navigate} = props.navigation
+    const item = props.item
 
     return (
         <Card style={styles.card} 
             onPress={() => {
-                console.log(item.id)
                 navigate('Campaign', {
                     category: item
                 })
@@ -24,80 +25,6 @@ const CategoryCard = (props) => {
         </Card>
     )
 }
-const data = [
-    {
-        id: '1',
-        name: 'Hunger',
-        icon: 'food',
-        color: 'orange',
-    },
-    {
-        id: '2',
-        name: 'Health & Medical Care',
-        icon: 'stethoscope',
-        color: 'red',
-    },
-    {
-        id: '3',
-        name: 'Disaster Relief',
-        icon: 'medical-bag',
-        color: 'black',
-    },
-    {
-        id: '4',
-        name: 'Environment',
-        icon: 'flower',
-        color: 'green',
-    },
-    {
-        id: '5',
-        name: 'Arts & Culture',
-        icon: 'music',
-        color: 'purple',
-    },
-    {
-        id: '6',
-        name: 'Animals & Humane',
-        icon: 'paw',
-        color: 'pink',
-    },
-    {
-        id: '7',
-        name: 'Human Services',
-        icon: 'toolbox',
-        color: 'firebrick',
-    },
-    {
-        id: '8',
-        name: 'Education',
-        icon: 'school',
-        color: 'brown',
-    },
-    {
-        id: '9',
-        name: 'Active Duty & Veterans',
-        icon: 'pistol',
-        color: 'olive',
-    },
-    {
-        id: '10',
-        name: 'Community & Family',
-        icon: 'account-group',
-        color: 'teal',
-    },
-    {
-        id: '11',
-        name: 'Faith & Missions',
-        icon: 'church',
-        color: 'gold',
-    },
-    {
-        id: '12',
-        name: 'Global',
-        icon: 'earth',
-        color: 'darkolivegreen',
-    },
-]
 
 class HomeScreen extends React.Component {
     state = {
@@ -142,7 +69,7 @@ class HomeScreen extends React.Component {
                 </Title>
 
                 <View style={styles.categoryList}>
-                    {data.map(item => (
+                    {categories.map(item => (
                         <CategoryCard key={item.id} item={item} {...this.props}/>
                     ))}
                 </View>

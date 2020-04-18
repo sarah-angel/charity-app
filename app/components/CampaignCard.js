@@ -4,48 +4,38 @@ import { Title, Text, Button, Divider, Avatar, Card, Paragraph } from 'react-nat
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { withTheme } from 'react-native-paper'
 
+const serverUrl = 'http://192.168.43.184:8081'
+
 const CampaignCard = (props) => {
     const { colors } = props.theme
     const campaign = props.item.item
     const category = props.category
     const {navigate} = props.navigation
 
-    const handleDonate = () => {
-		
-            fetch("http://192.168.43.184:8080" + "/categories", {
-                method: "GET",
-                headers: {"Content-Type": "application/json"},
-            }).then((response) => {
-                return response.json()
-            }).then((data) => {
-                console.log(data)
-            }).catch((error) => {
-                console.log(error)
-            })
-    }
-
     return (
         <Card style={styles.root}>
         <View style={styles.card}>
             <View style={{ width: 300, justifyContent: 'flex-start' }} >
           <Card.Title style={styles.cardTitle}
-            title="UDSM Rotaract Club" 
+            title={campaign.campaignName}
             titleStyle={styles.cardTitle}
             subtitle={
               <>
                 <Icon name="map-marker" />
-                <Text>Tanzania</Text>
+            <Text>{campaign.country}</Text>
               </>
             }
           />
           <Card.Content style={styles.cardContent}>
-            <Paragraph style={styles.cardText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi bibendum tortor in eros dictum pellentesque. Class aptent taciti sociosqu ad.</Paragraph>
+            <Paragraph style={styles.cardText}>
+                {campaign.description}
+            </Paragraph>
           </Card.Content>
           </View>
           <View style={{flex: 1, width: 100}}>
               { campaign.logo 
                 ? (
-                    <Avatar.Image size={100} style={styles.cardImg} source={{uri: 'https://picsum.photos/700'}} />
+                    <Avatar.Image size={100} style={styles.cardImg} source={{uri: serverUrl + '/campaign/' + campaign.id + '/image/' + campaign.logo}} />
                 ) : (
                     <Avatar.Icon size={100} style={styles.cardIcon} icon={category.icon} color={category.color} />
                 )}

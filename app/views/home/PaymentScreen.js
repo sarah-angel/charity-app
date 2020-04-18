@@ -8,7 +8,8 @@ import { CommonActions } from '@react-navigation/native'
 import GLOBAL from '../../global'
 import { isAuthenticated } from '../../auth/authService'
 import { getStripeCustomerId } from '../../services/userService'
-import { getCreditCardToken, saveCardAndPay, pay, getSavedCards } from '../../services/paymentService'
+import { getCreditCardToken, saveCard, pay, getSavedCards } from '../../services/paymentService'
+import { saveDonationDetails } from '../../services/donationService'
 import MyCard from '../../components/MyCard';
 
 class PaymentScreen extends React.Component {
@@ -121,17 +122,12 @@ class PaymentScreen extends React.Component {
             name: this.state.cardName ? this.state.cardName : null,
             stripeCustomerId: this.state.stripeCustomerId,
             cardId: this.state.cardId,
+            donation: this.props.route.params.donations,
         }
 
         //If cardId is given then don't fetch token
         if ( this.state.cardId )
-            pay(data).then(response => {
-                if (response.error)
-                    this.setState({submitted: false, error: response.error})
-                else
-                    if (response.status == 'succeeded')
-                        this.setState({success: true})
-            })
+            this.pay(data)
 
         var cardData = {
             cardNumber : this.state.cardNumber,
@@ -151,31 +147,48 @@ class PaymentScreen extends React.Component {
                 }
                 else{
                     this.setState({stripeToken: response})
-                    console.log(response)
                     data.stripeToken = response
 
                     //if save card is checked, save card then pay
                     if ( this.state.saveCard ){
                         
-                        saveCardAndPay(data).then(response => {
+                        saveCard(data).then(response => {
                             if (response.error)
                                 this.setState({submitted: false, error: response.error})
-                            else {
-                                if (response.status == 'succeeded')
-                                    this.setState({success: true})
-                            }
+                            else 
+                                this.pay(data)
                         })
                     }else {
-                        pay(data).then(response => {
-                            if (response.error)
-                                this.setState({submitted: false, error: response.error})
-                            else
-                                if (response.status == 'succeeded')
-                                    this.setState({success: true})
-                        })
+                        this.pay(data)
                     }
                 }
             })
+    }
+
+    //Charge credit card after fetching token and/or saving card
+    pay = (data) => {
+        pay(data).then(response => {
+            if (response.error)
+                this.setState({submitted: false, error: response.error})
+            else
+                if (response.status == 'succeeded'){
+                    //send donation details to server for storing
+                    var x = this.props.route.params.donations
+                    var donationDetails = {
+                        categoryId: x[0].category.id,
+                        campaignId: x[0].campaign.id,
+                        amount: x[0].amount,
+                        currency: x[0].currency,
+                        userId: this.state.userId,
+                    }
+                    if ( this.state.userId )
+                        saveDonationDetails(donationDetails).then(response => {
+                            console.log(response)
+                        })
+
+                    this.setState({success: true})
+                }
+        })
     }
 
     reset = () => { 

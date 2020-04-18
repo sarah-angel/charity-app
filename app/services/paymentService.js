@@ -42,32 +42,32 @@ const getCreditCardToken = (cardData) => {
  * Returns stripeCustomerId if card saved successfully
  * Save stripeCustomerId in the database for user
  * then calls pay
- * @param  cardData 
+ * @param  data 
  */
-const saveCardAndPay = (cardData) => {
+const saveCard = (data) => {
 
     return fetch( paymentURL + '/customer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify(cardData)
+        body: JSON.stringify(data)
     }).then( response => 
         response.json()
     ).then(response => {
-        cardData.stripeCustomerId = cardData.stripeCustomerId ? cardData.stripeCustomerId : response.id
+        data.stripeCustomerId = data.stripeCustomerId ? data.stripeCustomerId : response.id
         
         //save in db
         var user = {
-            id: cardData.userId,
-            stripeCustomerId: cardData.stripeCustomerId,
+            id: data.userId,
+            stripeCustomerId: data.stripeCustomerId,
         }
 
         return saveStripeCustomerId(user)
-            .then(res => {
-                if (res.error)
-                    return res
-                else
-                    return pay(cardData)
-            })
+            // .then(res => {
+            //     if (res.error)
+            //         return res
+            //     else
+            //         return pay(data)
+            // })
 
     }).catch(error => 
         console.log(error)
@@ -75,11 +75,12 @@ const saveCardAndPay = (cardData) => {
 
 }
 
-const pay = (cardData) => {
+//Make payment 
+const pay = (data) => {
     return fetch( paymentURL + '/charge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify(cardData)
+        body: JSON.stringify(data)
     }).then( response => 
         response.json()
     ).catch(error => 
@@ -99,4 +100,4 @@ const getSavedCards = (data) => {
     )
 }
 
-export { getCreditCardToken, saveCardAndPay, pay, getSavedCards }
+export { getCreditCardToken, saveCard, pay, getSavedCards }

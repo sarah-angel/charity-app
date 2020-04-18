@@ -3,25 +3,30 @@ import { StyleSheet, View, SafeAreaView, FlatList, ScrollView } from 'react-nati
 import { Title, Text, Button, Divider, Avatar, Card, Paragraph } from 'react-native-paper';
 import { withTheme } from 'react-native-paper'
 
-class CampaignInfoScreen extends React.Component{
+class AddCampaignScreen extends React.Component{
     
     state = {
         loading: true,
-        data: [],
-        //category: this.props.route.params.category,
+        campaignName: '',
+        description: '',
+        country: '',
+        categoryId: null,
+        image: null, //logo
     }
     
     componentDidMount(){
-        //Fetch campaign by id from the database
 
         this.setState({loading: false})
     }
 
+    //TODO: textInput for campaignName, description, Country
+    //dropdown list for category
+    //image upload for logo/image?
     render(){
         return (
             <SafeAreaView >
               <ScrollView>
-                <Text>Info page</Text>
+                <Text>Add Campaign</Text>
               </ScrollView>
             </SafeAreaView>
         );
@@ -38,4 +43,4 @@ const sytles = StyleSheet.create({
     },
 });
 
-export default withTheme(CampaignInfoScreen);
+export default withTheme(AddCampaignScreen);
