@@ -5,7 +5,6 @@ import { Text } from 'react-native-paper'
 
 import Header from './Header'
 import HomeScreen from '../views/home/HomeScreen'
-import HomeScreen2 from '../../HomeScreen2'
 import CampaignScreen from '../views/home/CampaignScreen'
 import CampaignInfoScreen from '../views/home/CampaignInfoScreen'
 import DonateScreen from '../views/home/DonateScreen'

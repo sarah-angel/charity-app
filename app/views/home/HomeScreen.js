@@ -64,7 +64,7 @@ class HomeScreen extends React.Component {
                     </Card.Content>
                 </Card>
 
-                <Title style={{marginLeft: 10, marginTop: 10, marginBottom: 10, textAlign: 'center'}}>
+                <Title style={{marginLeft: 10, marginTop: 10, marginBottom: 10, textAlign: 'center', fontSize: 18}}>
                     Donation Categories
                 </Title>
 

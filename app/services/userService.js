@@ -40,4 +40,19 @@ const saveStripeCustomerId = (data) => {
     )
 }
 
-export { getStripeCustomerId, saveStripeCustomerId }
+
+const getUserDetails = (userId) => {
+    return fetch(serverUrl + '/user/' + userId, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json', //server format
+            'Content-Type': 'application/json', 
+        },  
+    }).then( response => {
+        return response.json()
+    }).catch( error =>
+        console.log(error)
+    )
+
+}
+export { getStripeCustomerId, saveStripeCustomerId, getUserDetails }

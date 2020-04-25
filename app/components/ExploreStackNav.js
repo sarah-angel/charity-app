@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack';
 
 import Header from './Header'
-import HomeScreen from '../views/home/HomeScreen'
+import HomeScreen from '../views/explore/HomeScreen'
 
 const ExploreStack = createStackNavigator();
 

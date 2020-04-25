@@ -12,4 +12,15 @@ const saveDonationDetails = (data) => {
     )
 }
 
-export { saveDonationDetails }
+const getTotalByUser = (userId) => {
+    return fetch( serverUrl + '/user/' + userId + '/donations/total', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json'},
+    }).then( response => {
+        return response.json()
+    }).catch(error => 
+        console.log(error)
+    )
+}
+
+export { saveDonationDetails, getTotalByUser }
