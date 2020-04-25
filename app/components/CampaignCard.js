@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, View, SafeAreaView, FlatList } from 'react-native'
+import { StyleSheet, View, SafeAreaView, FlatList, Image } from 'react-native'
 import { Title, Text, Button, Divider, Avatar, Card, Paragraph } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { withTheme } from 'react-native-paper'
@@ -11,6 +11,15 @@ const CampaignCard = (props) => {
     const campaign = props.item.item
     const category = props.category
     const {navigate} = props.navigation
+    
+    const [isLogo, setLogo] = React.useState(false)
+
+    //check if logo is given
+    fetch(serverUrl + '/campaign/' + campaign.id + '/image/logo')
+        .then(res => { 
+            if (res.status == 200)
+                setLogo(true)
+        })
 
     return (
         <Card style={styles.root}>
@@ -22,7 +31,7 @@ const CampaignCard = (props) => {
             subtitle={
               <>
                 <Icon name="map-marker" />
-            <Text>{campaign.country}</Text>
+                <Text>{campaign.country}</Text>
               </>
             }
           />
@@ -33,9 +42,11 @@ const CampaignCard = (props) => {
           </Card.Content>
           </View>
           <View style={{flex: 1, width: 100}}>
-              { campaign.logo 
+              { isLogo
                 ? (
-                    <Avatar.Image size={100} style={styles.cardImg} source={{uri: serverUrl + '/campaign/' + campaign.id + '/image/' + campaign.logo}} />
+                    <Avatar.Image size={100} style={styles.cardImg} 
+                        source={{uri: serverUrl + '/campaign/' + campaign.id + '/image/logo'}}
+                    />
                 ) : (
                     <Avatar.Icon size={100} style={styles.cardIcon} icon={category.icon} color={category.color} />
                 )}
@@ -92,7 +103,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
         justifyContent: 'flex-end',
         alignSelf: 'flex-end',
-        
+        backgroundColor: 'white',
     },
     cardIcon:{
         marginRight: 10,

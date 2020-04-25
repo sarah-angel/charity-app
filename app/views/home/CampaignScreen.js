@@ -38,7 +38,7 @@ class CampaignScreen extends React.Component{
                         item={item} {...this.props}
                     />
                 }
-                  keyExtractor={item => item.id}
+                  keyExtractor={item => item.id.toString()}
                   ListHeaderComponent={<Title>Campaigns</Title>}
                   ListHeaderComponentStyle={sytles.title}
               />

@@ -1,7 +1,7 @@
 const serverUrl = 'http://192.168.43.184:8081'
 
 const saveDonationDetails = (data) => {
-    return fetch( serverUrl + '/donation', {
+    return fetch( serverUrl + '/donations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
         body: JSON.stringify(data)

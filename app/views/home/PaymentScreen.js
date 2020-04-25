@@ -67,13 +67,11 @@ class PaymentScreen extends React.Component {
                     if ( token != null ){
                         this.setState({signedIn: true, userId: token.userId})
                     
-                        console.log(token.userId)
                         if ( !this.state.stripeCustomerId )
                             getStripeCustomerId(token.userId).then( response => {
                                 if ( response.error )
                                     this.setState({error: response.error})
 
-                                console.log(response)
                                 this.setState({
                                     stripeCustomerId: response.stripeCustomerId 
                                         ? response.stripeCustomerId 
@@ -91,7 +89,6 @@ class PaymentScreen extends React.Component {
     handleCardMethod = () => {
         this.setState({method: 'card'})
 
-        console.log(this.state.stripeCustomerId)
         if ( this.state.stripeCustomerId ){
             var data = {
                 stripeCustomerId: this.state.stripeCustomerId
@@ -102,7 +99,6 @@ class PaymentScreen extends React.Component {
                     this.setState({error: response.error})
                 else
                     this.setState({savedCards: response.data, newCard: false})
-                console.log(response)
             })
         }
 
@@ -173,14 +169,19 @@ class PaymentScreen extends React.Component {
             else
                 if (response.status == 'succeeded'){
                     //send donation details to server for storing
-                    var x = this.props.route.params.donations
-                    var donationDetails = {
-                        categoryId: x[0].category.id,
-                        campaignId: x[0].campaign.id,
-                        amount: x[0].amount,
-                        currency: x[0].currency,
-                        userId: this.state.userId,
+                    const  donations = this.props.route.params.donations
+                    var donationDetails = []
+
+                    for ( var donation of donations){
+                        donationDetails.push({
+                            categoryId: donation.category.id,
+                            campaignId: donation.campaign.id,
+                            amount: donation.amount,
+                            currency: donation.currency,
+                            userId: this.state.userId,
+                        })
                     }
+
                     if ( this.state.userId )
                         saveDonationDetails(donationDetails).then(response => {
                             console.log(response)

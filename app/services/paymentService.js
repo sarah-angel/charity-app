@@ -62,12 +62,6 @@ const saveCard = (data) => {
         }
 
         return saveStripeCustomerId(user)
-            // .then(res => {
-            //     if (res.error)
-            //         return res
-            //     else
-            //         return pay(data)
-            // })
 
     }).catch(error => 
         console.log(error)
