@@ -5,6 +5,8 @@ import { withTheme } from 'react-native-paper'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { ScrollView } from 'react-native-gesture-handler';
 
+import MessagePopup from '../../components/MessagePopup'
+
 import { isAuthenticated } from '../../auth/authService'
 import { getTotalByUser } from '../../services/donationService'
 import { getUserDetails } from '../../services/userService'
@@ -16,6 +18,7 @@ class HomeScreen extends React.Component {
         currency: 'USD',
         total: '0.00',
         username: '',
+        error: null,
     }
 
     colors = this.props.theme.colors
@@ -82,7 +85,9 @@ class HomeScreen extends React.Component {
                             <Card.Title 
                                 title={this.state.username}
                                 titleStyle={{fontSize: 18, marginLeft: 10}}
-                                left={() => <Avatar.Icon icon="account" size={100}/>}
+                                left={() => 
+                                    <Avatar.Icon icon="account" size={100} style={{}} />
+                                }
                                 leftStyle={{marginRight: 60, marginTop: 10}}
                                 subtitle={
                                     <Text style={[{fontSize: 15}, {color: this.colors.primary}]}>
@@ -111,6 +116,12 @@ class HomeScreen extends React.Component {
                         </Card>
                     </View>
                 </ScrollView>
+
+                <MessagePopup error={this.state.error} 
+                    message={this.state.message} 
+                    dismiss={()=> this.setState({error: null, message: null})} 
+                />
+                
             </View>
             
         )

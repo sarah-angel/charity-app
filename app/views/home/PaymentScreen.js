@@ -11,6 +11,7 @@ import { getStripeCustomerId } from '../../services/userService'
 import { getCreditCardToken, saveCard, pay, getSavedCards } from '../../services/paymentService'
 import { saveDonationDetails } from '../../services/donationService'
 import MyCard from '../../components/MyCard';
+import MessagePopup from '../../components/MessagePopup'
 
 class PaymentScreen extends React.Component {
     colors = this.props.theme.colors
@@ -122,8 +123,10 @@ class PaymentScreen extends React.Component {
         }
 
         //If cardId is given then don't fetch token
-        if ( this.state.cardId )
+        if ( this.state.cardId ){
             this.pay(data)
+            return
+        }
 
         var cardData = {
             cardNumber : this.state.cardNumber,
@@ -184,7 +187,8 @@ class PaymentScreen extends React.Component {
 
                     if ( this.state.userId )
                         saveDonationDetails(donationDetails).then(response => {
-                            console.log(response)
+                            if (response.error)
+                                this.setState({error: response.error})
                         })
 
                     this.setState({success: true})
@@ -193,6 +197,8 @@ class PaymentScreen extends React.Component {
     }
 
     reset = () => { 
+        this.setState({success: false})
+        
         GLOBAL.donations = []
 
         //reset donation stack
@@ -354,17 +360,6 @@ class PaymentScreen extends React.Component {
                         M-Pesa services are currently unavailable
                     </Title>
 
-                    { this.state.error && (
-                        <View style={styles.errorWrapper}>
-                            <View style={styles.errorIconWrapper}>
-                                <Icon name='alert-circle' size={20} color='#c22' />
-                            </View>
-                            <View style={styles.errorTextWrapper}>
-                                <Text style={styles.errorText}>{this.state.error}</Text>
-                            </View>
-                        </View>
-                    )}
-
                     <Button mode="contained" style={styles.donateBtn}
                         disabled={this.state.submitted}
                         onPress={this.handlePay}
@@ -376,7 +371,7 @@ class PaymentScreen extends React.Component {
                         <Modal visible={this.state.success}
                             contentContainerStyle={styles.successModal}
                             dismissable={true}
-                            onDismiss={ this.reset } //this.props.navigation.navigate('Home')}
+                            onDismiss={ this.reset } 
                         >
                             <Card style={styles.successCard}>
                                 <Text style={{fontSize: 20, textAlign: 'center'}}>Thank you for your generous donation.</Text>
@@ -387,6 +382,11 @@ class PaymentScreen extends React.Component {
 
 
                 </ScrollView>
+
+                <MessagePopup error={this.state.error} 
+                    message={this.state.message} 
+                    dismiss={()=> this.setState({error: null, message: null})} 
+                />
             </SafeAreaView>
             
         )

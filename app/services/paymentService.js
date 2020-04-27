@@ -1,9 +1,8 @@
 import { saveStripeCustomerId } from './userService'
-import { RecyclerViewBackedScrollView } from 'react-native'
 
 const stripeURL = 'https://api.stripe.com/v1/tokens'
 const STRIPE_PUBLIC_KEY = 'pk_test_sHnZDFCFuu6b6sHMaHzolLA100RN8ksrRC'
-const paymentURL = 'http://192.168.43.184:8080'
+const paymentURL = 'https://payment-microservice.herokuapp.com'
 
 /**
  * 

@@ -46,4 +46,8 @@ const uploadCampaignLogo = (image) => {
     )
 }
 
-export { getCampaignsByCategory, saveCampaign, uploadCampaignLogo }
+const getLogo = (campaignId) => {
+    return fetch(serverUrl + '/campaign/' + campaignId + '/image/logo')
+}
+
+export { getCampaignsByCategory, saveCampaign, uploadCampaignLogo, getLogo }

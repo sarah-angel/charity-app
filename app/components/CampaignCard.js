@@ -4,6 +4,7 @@ import { Title, Text, Button, Divider, Avatar, Card, Paragraph } from 'react-nat
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { withTheme } from 'react-native-paper'
 
+import { getLogo } from '../services/campaignService'
 const serverUrl = 'http://192.168.43.184:8081'
 
 const CampaignCard = (props) => {
@@ -15,7 +16,7 @@ const CampaignCard = (props) => {
     const [isLogo, setLogo] = React.useState(false)
 
     //check if logo is given
-    fetch(serverUrl + '/campaign/' + campaign.id + '/image/logo')
+    getLogo(campaign.id)
         .then(res => { 
             if (res.status == 200)
                 setLogo(true)

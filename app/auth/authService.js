@@ -38,10 +38,9 @@ const signIn = async (user) => {
     }).then( response => 
         response.json()
     ).then( async data => {
-        console.log(data)
         response = data
 
-        if ( !data.error ) //store token: in this case token is userId
+        if ( !data.error ) //store token
             try {
                 await AsyncStorage.setItem('userToken', JSON.stringify(data.token))
             }catch (error){
@@ -65,7 +64,6 @@ const register = async (user) => {
     }).then( response => 
         response.json()
     ).then( async data => {
-        console.log(data)
         response = data
         
         if ( !data.error ) //store token: in this case token is userId

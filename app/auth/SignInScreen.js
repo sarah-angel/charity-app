@@ -5,6 +5,8 @@ import { withTheme } from 'react-native-paper'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { ScrollView } from 'react-native-gesture-handler';
 
+import MessagePopup from '../components/MessagePopup'
+
 import { signIn } from './authService'
 
 class SignInScreen extends React.Component {
@@ -17,6 +19,11 @@ class SignInScreen extends React.Component {
     }
 
     handleSignIn = () => {
+        if ( !this.state.username || !this.state.password){
+            this.setState({error: 'Please enter your credentials to sign in.'})
+            return
+        }
+
         this.setState({submitted: true})
 
         var user = {
@@ -52,8 +59,6 @@ class SignInScreen extends React.Component {
                 Sign In 
             </Title>
 
-            <ErrorView error={this.state.error} />
-
             <TextInput
                 label="Username"
                 mode="outlined"
@@ -64,6 +69,7 @@ class SignInScreen extends React.Component {
             <TextInput
                 label="Password"
                 mode="outlined"
+                secureTextEntry={true}
                 onChangeText={(password) => this.setState({password})}
                 style={{marginBottom: 10, marginTop: 10}}
             />
@@ -92,6 +98,8 @@ class SignInScreen extends React.Component {
                 Sign in to track your donations and get access to other services like credit card management.
             </Text>
             </View>
+
+            <MessagePopup error={this.state.error} dismiss={() => this.setState({error: null})}/>
         </View>
         
     )

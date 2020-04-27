@@ -4,7 +4,7 @@ import { Text, Button, Title, Card, TextInput } from 'react-native-paper';
 import { withTheme } from 'react-native-paper'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
-import ErrorView from '../components/Error'
+import MessagePopup from '../components/MessagePopup'
 import { signIn, register } from './authService'
 
 class RegisterScreen extends React.Component {
@@ -24,7 +24,11 @@ class RegisterScreen extends React.Component {
     }
 
     handleRegister = () => {
-        console.log("Registering...")
+        if ( !this.state.username || !this.state.password){
+            this.setState({error: 'Please fill in the required fields.'})
+            return
+        }
+        
         this.setState({submitted: true})
 
         var user = {
@@ -63,8 +67,6 @@ class RegisterScreen extends React.Component {
             <Title style={{textAlign: 'center'}}>
                 Register 
             </Title>
-
-            <ErrorView error={this.state.error} />
 
             <TextInput
                 label="Username"
@@ -105,6 +107,7 @@ class RegisterScreen extends React.Component {
             <TextInput
                 label="Password"
                 mode="outlined"
+                secureTextEntry={true}
                 onChangeText={(value) => this.handleChange('password', value)}
                 style={{marginBottom: 10, marginTop: 10}}
             />
@@ -122,6 +125,8 @@ class RegisterScreen extends React.Component {
             </Text>
             </View>
             </ScrollView>
+
+            <MessagePopup error={this.state.error} dismiss={() => this.setState({error: null})} />
         </View>
         
     )}

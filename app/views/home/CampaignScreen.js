@@ -3,6 +3,7 @@ import { StyleSheet, View, SafeAreaView, FlatList } from 'react-native'
 import { Title, Text, Button, Divider, Avatar, Card, Paragraph } from 'react-native-paper';
 import { withTheme } from 'react-native-paper'
 
+import MessagePopup from '../../components/MessagePopup'
 import CampaignCard from '../../components/CampaignCard'
 import { getCampaignsByCategory } from '../../services/campaignService'
 
@@ -12,6 +13,7 @@ class CampaignScreen extends React.Component{
         loading: true,
         data: [],
         category: this.props.route.params.category,
+        error: null,
     }
     
     componentDidMount(){
@@ -42,6 +44,12 @@ class CampaignScreen extends React.Component{
                   ListHeaderComponent={<Title>Campaigns</Title>}
                   ListHeaderComponentStyle={sytles.title}
               />
+
+                <MessagePopup error={this.state.error} 
+                    message={this.state.message} 
+                    dismiss={()=> this.setState({error: null, message: null})} 
+                />
+                
             </SafeAreaView>
         );
     }

@@ -6,7 +6,7 @@ import { Dropdown } from 'react-native-material-dropdown'
 import { withTheme } from 'react-native-paper'
 
 import GLOBAL from '../../global'
-import ErrorView from '../../components/Error'
+import MessagePopup from '../../components/MessagePopup'
 
 var DonateCard = (props) => {
     const donation = props.donation
@@ -156,10 +156,8 @@ class DonateScreen extends React.Component{
 
     render(){
         return (
-                <ScrollView style={styles.root} contentContainerStyle={{flexGrow: 1, flexDirection: 'column'}}>
+            <ScrollView style={styles.root} contentContainerStyle={{flexGrow: 1, flexDirection: 'column'}}>
                 <Title style={styles.title}>Donation Basket</Title>
-
-                <ErrorView error={this.state.error} />
 
                 {/* <View style={{}}>
                     <Dropdown
@@ -199,7 +197,13 @@ class DonateScreen extends React.Component{
                         onPress={this.goToPay}
                     >Continue to Donate</Button>
                 </View>
-                </ScrollView>
+
+                <MessagePopup error={this.state.error} 
+                    message={this.state.message} 
+                    dismiss={()=> this.setState({error: null, message: null})} 
+                />
+
+            </ScrollView>
         );
     }
     

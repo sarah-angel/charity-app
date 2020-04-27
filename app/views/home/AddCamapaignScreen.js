@@ -7,6 +7,8 @@ import * as Permissions from 'expo-permissions'
 import { ImageBrowser } from 'expo-image-picker-multiple'
 import { Dropdown } from 'react-native-material-dropdown'
 
+import MessagePopup from '../../components/MessagePopup'
+
 import { categories } from '../../store'
 import { uploadCampaignLogo, saveCampaign } from '../../services/campaignService'
 
@@ -38,6 +40,11 @@ class AddCampaignScreen extends React.Component{
     }
 
     handleSave = () => {
+        if ( !this.state.campaignName || !this.state.categoryId || !this.state.description ){
+            this.setState({error: 'Please fill in required Campaign details.'})
+            return
+        }
+
         let campaign = {
             campaignName: this.state.campaignName,
             description: this.state.description,
@@ -173,6 +180,12 @@ class AddCampaignScreen extends React.Component{
                 </Button>
 
               </ScrollView>
+
+              <MessagePopup error={this.state.error} 
+                message={this.state.message} 
+                dismiss={() => this.setState({error: null, message: null})} 
+              />
+
             </SafeAreaView>
         );
     }
