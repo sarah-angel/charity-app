@@ -15,9 +15,9 @@ var DonateCard = (props) => {
         <Card style={styles.card}>
             <View style={styles.card}>
                 <View style={{}}>
-                  { donation.campaign.logo 
+                  { donation.logo
                     ? (
-                        <Avatar.Image size={100} style={styles.cardImg} source={{uri: 'https://picsum.photos/700'}} />
+                        <Avatar.Image size={100} style={styles.cardImg} source={{uri: donation.logo}} />
                     ) : (
                         <Avatar.Icon size={100} style={styles.cardIcon} icon={donation.category.icon} color={donation.category.color} />
                     )}
@@ -96,6 +96,7 @@ class DonateScreen extends React.Component{
             GLOBAL.donations.push({
                 category: this.props.route.params.category,
                 campaign: this.props.route.params.campaign,
+                logo: this.props.route.params.logo,
                 amount: 0,
                 currency: 'USD',
             })
@@ -237,7 +238,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
         justifyContent: 'flex-start',
         alignSelf: 'flex-start',
-        
+        backgroundColor: 'white',
     },
     cardIcon:{
        // marginRight: 10,

@@ -1,7 +1,7 @@
-const serverUrl = 'http://192.168.43.184:8081'
+import { CHARITY_SERVER_URL } from 'react-native-dotenv'
 
 const saveDonationDetails = (data) => {
-    return fetch( serverUrl + '/donations', {
+    return fetch( CHARITY_SERVER_URL + '/donations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
         body: JSON.stringify(data)
@@ -13,7 +13,7 @@ const saveDonationDetails = (data) => {
 }
 
 const getTotalByUser = (userId) => {
-    return fetch( serverUrl + '/user/' + userId + '/donations/total', {
+    return fetch( CHARITY_SERVER_URL + '/user/' + userId + '/donations/total', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json'},
     }).then( response => {

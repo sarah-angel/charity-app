@@ -1,7 +1,7 @@
-const serverUrl = 'http://192.168.43.184:8081'
+import { CHARITY_SERVER_URL } from 'react-native-dotenv'
 
 const getCampaignsByCategory = (categoryId) => {
-    return fetch( serverUrl + '/category/' + categoryId + '/campaigns', {
+    return fetch( CHARITY_SERVER_URL + '/category/' + categoryId + '/campaigns', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json'},
     }).then( response => {
@@ -12,7 +12,7 @@ const getCampaignsByCategory = (categoryId) => {
 }
 
 const saveCampaign = (campaign) => {
-    return fetch( serverUrl + '/campaign', {
+    return fetch( CHARITY_SERVER_URL + '/campaign', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
         body: JSON.stringify(campaign)
@@ -32,7 +32,7 @@ const uploadCampaignLogo = (image) => {
 
     } )
 
-    return fetch( serverUrl + '/campaign/' + image.campaignId + '/logo' , {
+    return fetch( CHARITY_SERVER_URL + '/campaign/' + image.campaignId + '/logo' , {
         method: 'POST',
         headers: { 
             'Content-Type': 'multipart/form-data',
@@ -47,7 +47,7 @@ const uploadCampaignLogo = (image) => {
 }
 
 const getLogo = (campaignId) => {
-    return fetch(serverUrl + '/campaign/' + campaignId + '/image/logo')
+    return fetch(CHARITY_SERVER_URL + '/campaign/' + campaignId + '/image/logo')
 }
 
 export { getCampaignsByCategory, saveCampaign, uploadCampaignLogo, getLogo }

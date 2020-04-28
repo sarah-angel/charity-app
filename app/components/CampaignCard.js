@@ -4,8 +4,8 @@ import { Title, Text, Button, Divider, Avatar, Card, Paragraph } from 'react-nat
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { withTheme } from 'react-native-paper'
 
+import { CHARITY_SERVER_URL } from 'react-native-dotenv'
 import { getLogo } from '../services/campaignService'
-const serverUrl = 'http://192.168.43.184:8081'
 
 const CampaignCard = (props) => {
     const { colors } = props.theme
@@ -13,13 +13,16 @@ const CampaignCard = (props) => {
     const category = props.category
     const {navigate} = props.navigation
     
-    const [isLogo, setLogo] = React.useState(false)
+    const [isLogo, setIsLogo] = React.useState(false)
+    const [logo, setLogo] = React.useState(null)
 
     //check if logo is given
     getLogo(campaign.id)
         .then(res => { 
-            if (res.status == 200)
-                setLogo(true)
+            if (res.status == 200){
+                setIsLogo(true)
+                setLogo( CHARITY_SERVER_URL + '/campaign/' + campaign.id + '/image/logo' )
+            }
         })
 
     return (
@@ -46,7 +49,7 @@ const CampaignCard = (props) => {
               { isLogo
                 ? (
                     <Avatar.Image size={100} style={styles.cardImg} 
-                        source={{uri: serverUrl + '/campaign/' + campaign.id + '/image/logo'}}
+                        source={{uri: logo}}
                     />
                 ) : (
                     <Avatar.Icon size={100} style={styles.cardIcon} icon={category.icon} color={category.color} />
@@ -60,6 +63,7 @@ const CampaignCard = (props) => {
                     navigate('CampaignInfo', {
                         campaign: campaign,
                         category: category,
+                        logo: logo,
                     }
                 )}
             >
@@ -72,6 +76,7 @@ const CampaignCard = (props) => {
                     navigate('Donate', {
                         campaign: campaign,
                         category: category,
+                        logo: logo,
                     })      
                 } 
                 style={{justifyContent: 'flex-end', borderColor: colors.primary}}

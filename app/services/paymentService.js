@@ -1,8 +1,6 @@
 import { saveStripeCustomerId } from './userService'
 
-const stripeURL = 'https://api.stripe.com/v1/tokens'
-const STRIPE_PUBLIC_KEY = 'pk_test_sHnZDFCFuu6b6sHMaHzolLA100RN8ksrRC'
-const paymentURL = 'https://payment-microservice.herokuapp.com'
+import { STRIPE_URL, STRIPE_PUBLIC_KEY, PAYMENT_SERVICE_URL } from 'react-native-dotenv'
 
 /**
  * 
@@ -17,7 +15,7 @@ const getCreditCardToken = (cardData) => {
         'card[name]': cardData.cardName
     }
 
-    return fetch(stripeURL, {
+    return fetch(STRIPE_URL, {
         method: 'POST',
         headers: {
             Accept: 'application/json', //server format
@@ -45,7 +43,7 @@ const getCreditCardToken = (cardData) => {
  */
 const saveCard = (data) => {
 
-    return fetch( paymentURL + '/customer', {
+    return fetch( PAYMENT_SERVICE_URL + '/customer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
         body: JSON.stringify(data)
@@ -70,7 +68,7 @@ const saveCard = (data) => {
 
 //Make payment 
 const pay = (data) => {
-    return fetch( paymentURL + '/charge', {
+    return fetch( PAYMENT_SERVICE_URL + '/charge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
         body: JSON.stringify(data)
@@ -82,7 +80,7 @@ const pay = (data) => {
 }
 
 const getSavedCards = (data) => {
-    return fetch( paymentURL + '/cards', {
+    return fetch( PAYMENT_SERVICE_URL + '/cards', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
         body: JSON.stringify(data)

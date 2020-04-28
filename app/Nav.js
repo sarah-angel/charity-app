@@ -38,6 +38,9 @@ export default class Nav extends React.Component {
             navigationState={this.state}
             onIndexChange={this._handleIndexChange}
             renderScene={this._renderScene}
+            //activeColor={this.theme.colors.primary}
+            //inactiveColor={'white'}
+            //barStyle={{backgroundColor: 'white'}}
           />
         </PaperProvider>
       );

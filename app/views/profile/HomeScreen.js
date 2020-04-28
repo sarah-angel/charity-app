@@ -40,6 +40,7 @@ class HomeScreen extends React.Component {
                 })
         })
 
+        if (this.state.userId)
         getUserDetails(this.state.userId).then( response => {
             if (response.error)
                 this.setState({error: response.error})
@@ -47,6 +48,7 @@ class HomeScreen extends React.Component {
                 this.setState({username: response.username})
         })
 
+        if (this.state.userId)
         getTotalByUser(this.state.userId).then(response => {
             if(response.error)
                 this.setState({error: response.error})

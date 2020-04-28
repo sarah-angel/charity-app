@@ -1,11 +1,11 @@
-const serverUrl = 'http://192.168.43.184:8081'
+import { CHARITY_SERVER_URL } from 'react-native-dotenv'
 
 /**
  * 
  * @param userId 
  */
 const getStripeCustomerId = (userId) => {
-    return fetch(serverUrl + '/user/' + userId, {
+    return fetch(CHARITY_SERVER_URL + '/user/' + userId, {
         method: 'GET',
         headers: {
             Accept: 'application/json', //server format
@@ -26,7 +26,7 @@ const getStripeCustomerId = (userId) => {
  * @param data.stripeCustomerId
  */
 const saveStripeCustomerId = (data) => {
-    return fetch(serverUrl + '/user/update/stripeCustomerId', {
+    return fetch(CHARITY_SERVER_URL + '/user/update/stripeCustomerId', {
         method: 'POST',
         headers: {
             Accept: 'application/json', //server format
@@ -42,7 +42,7 @@ const saveStripeCustomerId = (data) => {
 
 
 const getUserDetails = (userId) => {
-    return fetch(serverUrl + '/user/' + userId, {
+    return fetch(CHARITY_SERVER_URL + '/user/' + userId, {
         method: 'GET',
         headers: {
             Accept: 'application/json', //server format

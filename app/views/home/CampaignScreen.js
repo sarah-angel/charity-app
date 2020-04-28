@@ -13,6 +13,7 @@ class CampaignScreen extends React.Component{
         loading: true,
         data: [],
         category: this.props.route.params.category,
+        isData: true,
         error: null,
     }
     
@@ -22,8 +23,12 @@ class CampaignScreen extends React.Component{
             .then(response => {
                 if (response.error)
                     this.setState({error: response.error})
-                else
-                    this.setState({data: response})
+                else{
+                    this.setState({
+                        data: response,
+                        isData: response.length != 0,
+                    })                        
+                }
             })
 
         //this.setState({loading: false, data: x})
@@ -41,9 +46,16 @@ class CampaignScreen extends React.Component{
                     />
                 }
                   keyExtractor={item => item.id.toString()}
-                  ListHeaderComponent={<Title>Campaigns</Title>}
+                  ListHeaderComponent={
+                    <Title style={{fontSize: 18}}>Campaigns</Title>
+                }
                   ListHeaderComponentStyle={sytles.title}
               />
+                { !this.state.isData && 
+                    <Text style={{textAlign: 'center'}}>
+                        No campaigns to show for this category.
+                    </Text>
+                }
 
                 <MessagePopup error={this.state.error} 
                     message={this.state.message} 
