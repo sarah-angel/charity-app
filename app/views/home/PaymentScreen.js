@@ -348,17 +348,19 @@ class PaymentScreen extends React.Component {
                         </View>
                     </Card>
 
-                    <Title style={{ flex: 1, textAlign: 'center', textAlignVertical: 'center',
+                    <Text style={{ flex: 1, textAlign: 'center', 
+                        fontSize: 18, marginTop: 20,
                         display: this.state.method == 'paypal' ? 'flex' : 'none'}}
                     >
                         PayPal services are currently unavailable
-                    </Title>
+                    </Text>
 
-                    <Title style={{ flex: 1, textAlign: 'center', textAlignVertical: 'center',
+                    <Text style={{ flex: 1, textAlign: 'center', 
+                        fontSize: 18, marginTop: 20,
                         display: this.state.method == 'mpesa' ? 'flex' : 'none'}}
                     >
                         M-Pesa services are currently unavailable
-                    </Title>
+                    </Text>
 
                     <Button mode="contained" style={styles.donateBtn}
                         disabled={this.state.submitted}

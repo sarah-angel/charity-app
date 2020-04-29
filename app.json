@@ -9,9 +9,9 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/charity.png",
     "splash": {
-      "image": "./assets/icon.png",
+      "image": "./assets/charity.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

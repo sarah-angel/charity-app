@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
         borderColor: 'grey'
     },
     btn: {
-       // width: '100%',
+        width: 300,
         alignSelf: 'center',
         borderRadius: 18,
     },

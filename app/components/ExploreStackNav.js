@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import Header from './Header'
 import HomeScreen from '../views/explore/HomeScreen'
+import AddCampaignScreen from '../views/home/AddCamapaignScreen'
 
 const ExploreStack = createStackNavigator();
 
@@ -20,6 +21,7 @@ export default ExploreStackNav = () => {
           }}
         >
           <ExploreStack.Screen name="Home" component={HomeScreen} />
+          <ExploreStack.Screen name="AddCampaign" component={AddCampaignScreen} />
         </ExploreStack.Navigator>
       </NavigationContainer>
     )
