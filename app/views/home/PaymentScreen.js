@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, View, SafeAreaView, Image, ScrollView } from 'react-native'
-import { Title, Text, TextInput, Button, Modal, Portal, Card, Switch, Provider } from 'react-native-paper';
+import { Title, Text, TextInput, Button, Modal, Portal, Card, Switch, ActivityIndicator } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { withTheme } from 'react-native-paper'
 import { CommonActions } from '@react-navigation/native'
@@ -35,6 +35,8 @@ class PaymentScreen extends React.Component {
         currency: this.props.route.params.currency,
         submitted: false,
         success: false,
+        loading: true,
+        loadingCards: true,
         error: null,
     }
 
@@ -43,7 +45,7 @@ class PaymentScreen extends React.Component {
     componentDidMount = () => {
         isAuthenticated().then(token => {
             if ( token != null ){
-                this.setState({signedIn: true, userId: token.userId})
+                this.setState({signedIn: true, userId: token.userId, loading: false})
 
                 getStripeCustomerId(token.userId).then( response => {
                     if ( response.error )
@@ -62,11 +64,11 @@ class PaymentScreen extends React.Component {
             }
         })
 
-        this.props.navigation.addListener('focus', () => {
+        this.props.navigation.addListener('focus', async() => {
             if ( !this.state.userId )
-                isAuthenticated().then(token => {
+                await isAuthenticated().then(token => {
                     if ( token != null ){
-                        this.setState({signedIn: true, userId: token.userId})
+                        this.setState({signedIn: true, userId: token.userId, loading: false})
                     
                         if ( !this.state.stripeCustomerId )
                             getStripeCustomerId(token.userId).then( response => {
@@ -82,6 +84,7 @@ class PaymentScreen extends React.Component {
                             })    
                     } 
                 })
+            this.setState({loading: false})
         })
 
     }
@@ -99,7 +102,11 @@ class PaymentScreen extends React.Component {
                 if (response.error)
                     this.setState({error: response.error})
                 else
-                    this.setState({savedCards: response.data, newCard: false})
+                    this.setState({
+                        savedCards: response.data, 
+                        newCard: false,
+                        loadingCards: false
+                    })
             })
         }
 
@@ -197,7 +204,7 @@ class PaymentScreen extends React.Component {
     }
 
     reset = () => { 
-        this.setState({success: false})
+        this.setState({success: false, loading: true})
         
         GLOBAL.donations = []
 
@@ -215,6 +222,7 @@ class PaymentScreen extends React.Component {
     }
 
     render() {
+        if ( !this.state.loading )
         return (
             <SafeAreaView style={styles.root}>
                 <ScrollView contentContainerStyle={{flexGrow: 1, flexDirection: 'column'}}>                    
@@ -280,7 +288,7 @@ class PaymentScreen extends React.Component {
                         && this.state.method == 'card' 
                         && ( !this.state.savedCards //no saved cards
                                 ? (<Text style={{textAlignVertical: 'center', textAlign: 'center'}}>
-                                        Your saved cards will appear here.
+                                        You have not saved any cards yet.
                                     </Text> 
                                 ) : this.state.savedCards.map(card => 
                                     <MyCard key={card.id} savedCard={card}
@@ -288,9 +296,13 @@ class PaymentScreen extends React.Component {
                                     /> 
                         ))
                     }
+                    
+                    { this.state.method == 'card' &&
+                        <ActivityIndicator animating={this.state.loadingCards} style={{marginTop: 50}} />
+                    }
 
                     <Card style={[styles.detailsCard, 
-                        {display: (this.state.method == 'card' && this.state.newCard) 
+                        {display: (this.state.method == 'card' && this.state.newCard && !this.state.loadingCards) 
                             ? 'flex' : 'none'
                         }]}
                     >
@@ -391,6 +403,16 @@ class PaymentScreen extends React.Component {
                 />
             </SafeAreaView>
             
+        )
+
+        return (
+            <View style={{flex: 1}} >
+                <ActivityIndicator size={40}
+                    animating={this.state.loading} 
+                    color={this.props.theme.colors.primary} 
+                    style={{justifyContent: 'center', flex: 1}}
+                />
+            </View>
         )
     }
 }

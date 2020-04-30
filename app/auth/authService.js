@@ -1,6 +1,6 @@
 import { AsyncStorage } from 'react-native'
 
-const serverUrl = 'http://192.168.43.184:8081'
+import { CHARITY_SERVER_URL } from 'react-native-dotenv'
 
 async function isAuthenticated() {
     let userToken
@@ -31,7 +31,7 @@ const logOut = async () => {
 const signIn = async (user) => {
     var response = null
 
-    await fetch( serverUrl + '/signin', {
+    await fetch( CHARITY_SERVER_URL + '/signin', {
         method: 'POST',
         headers: {"Content-Type": "application/json"},
 		body: JSON.stringify(user)
@@ -57,7 +57,7 @@ const signIn = async (user) => {
 const register = async (user) => {
     var response = null
     
-    await fetch( serverUrl + '/signup', {
+    await fetch( CHARITY_SERVER_URL + '/signup', {
         method: 'POST',
         headers: {"Content-Type": "application/json"},
 		body: JSON.stringify(user)

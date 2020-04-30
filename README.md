@@ -14,4 +14,10 @@ For iOS: (hasn't been tested yet)
 `npm run ios`
 
 ## APK
-[Download here](https://exp-shell-app-assets.s3.us-west-1.amazonaws.com/android/%40sarahangel/Charity-65ba420ed7e4407ebd116fb8512f654a-signed.apk)
+[Download here](https://docs.google.com/uc?export=download&id=1s-YE1EdEFfBisF6QWWDM5JEULIuNNyEy)
+
+Note: Application is in test mode so use test cards for making payments
+
+Use the card numbers below with any valid date in the future with any 3 digits for cvc  
+Visa: `4242 4242 4242 4242` (no spaces)  
+Mastercard: `5555 5555 5555 4444` (no spaces)

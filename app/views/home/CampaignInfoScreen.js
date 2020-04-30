@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { StyleSheet, View, SafeAreaView, FlatList, ScrollView } from 'react-native'
 import { Title, Text, Button, Divider, Avatar, Card, Paragraph } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { withTheme } from 'react-native-paper'
 
+  
 class CampaignInfoScreen extends React.Component{
     
     state = {
@@ -19,9 +21,11 @@ class CampaignInfoScreen extends React.Component{
 
     render(){
         return (
-            <SafeAreaView >
-              <ScrollView>
-                <Text>Info page</Text>
+            <SafeAreaView style={{flex: 1}}>
+              <ScrollView contentContainerStyle={{flex: 1}}>
+                <Text style={styles.title}>
+                    Campaign Info currently not available
+                </Text>
               </ScrollView>
             </SafeAreaView>
         );
@@ -29,8 +33,12 @@ class CampaignInfoScreen extends React.Component{
     
 }
 
-const sytles = StyleSheet.create({
+const styles = StyleSheet.create({
+    scrollview: {
+        flex: 1,
+    },
     title: {
+        fontSize: 18,
         textAlign: 'center',
         alignSelf: 'center',
         marginTop: 10,

@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, SafeAreaView, FlatList, VirtualizedList } from 'react-native'
-import { Text, Button, Title, Card, TextInput, Avatar } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native'
+import { Text, Button, Title, Card, ActivityIndicator, Avatar } from 'react-native-paper';
 import { withTheme } from 'react-native-paper'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { ScrollView } from 'react-native-gesture-handler';
@@ -18,6 +18,7 @@ class HomeScreen extends React.Component {
         currency: 'USD',
         total: '0.00',
         username: '',
+        loading: true,
         error: null,
     }
 
@@ -28,18 +29,30 @@ class HomeScreen extends React.Component {
         await isAuthenticated().then(token => {
             if ( token != null ){
                 this.setState({signedIn: true, userId: token.userId})
-            }
-        })
+            } else
+                this.setState({loading: false})
+        }).then( () => 
+            this.getUser()
+        ).then( () => 
+            this.getTotal()
+        )            
 
-        this.props.navigation.addListener('focus', () => {
+        this.props.navigation.addListener('focus', async () => {
+            this.setState({loading: true})
             if ( !this.state.userId )
-                isAuthenticated().then(token => {
+                await isAuthenticated().then(token => {
                     if ( token != null ){
                         this.setState({signedIn: true, userId: token.userId})   
                     } 
                 })
+            this.getUser()
+            this.getTotal()
+            
         })
 
+    }
+
+    getUser = () => {
         if (this.state.userId)
         getUserDetails(this.state.userId).then( response => {
             if (response.error)
@@ -47,7 +60,9 @@ class HomeScreen extends React.Component {
             else
                 this.setState({username: response.username})
         })
+    }
 
+    getTotal = () => {
         if (this.state.userId)
         getTotalByUser(this.state.userId).then(response => {
             if(response.error)
@@ -55,11 +70,11 @@ class HomeScreen extends React.Component {
             else{
                 this.setState({total: response})
             }
-        })
-
+        }).then(() => this.setState({loading: false}))
     }
 
     render(){
+        if ( !this.state.loading)
         return (
             <View style={styles.root}>
                 <ScrollView contentContainerStyle={styles.root} style={styles.scrollView} >
@@ -125,7 +140,16 @@ class HomeScreen extends React.Component {
                 />
                 
             </View>
-            
+        )
+
+        return (
+            <View style={{flex: 1}} >
+                <ActivityIndicator size={40}
+                    animating={this.state.loading} 
+                    color={this.props.theme.colors.primary} 
+                    style={{justifyContent: 'center', flex: 1}}
+                />
+            </View>
         )
     }
 }
